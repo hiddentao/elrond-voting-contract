@@ -1,0 +1,182 @@
+{
+  "name": "basic tests",
+  "steps": [
+    {
+      "step": "setState",
+      "accounts": {
+        "0xacc1000000000000000000000000000000000000000000000000000000000001": {
+          "nonce": "1",
+          "balance": "0x500000",
+          "storage": {},
+          "code": ""
+        },
+        "0xacc1000000000000000000000000000000000000000000000000000000000002": {
+          "nonce": "1",
+          "balance": "0x500000",
+          "storage": {},
+          "code": ""
+        }
+      },
+      "newAddresses": [
+        {
+          "creatorAddress": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+          "creatorNonce": "1",
+          "newAddress": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+        }
+      ]
+    },
+    {
+      "step": "scDeploy",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "value": "0",
+        "contractCode": "file:../output/vote.wasm",
+        "arguments": [
+          "2"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 1 votes for position 0, vote commitment = hash(0 + 9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658)",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "commit",
+        "arguments": [
+          "0xb66a74d22acccadf162fcd538b2486e5eb19a2aab8e154ba34c483d02dd2340d"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 1 changes vote to position 1, vote commitment = hash(1 + 9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658)",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "commit",
+        "arguments": [
+          "0x60abe32f20ba0e8c090c9bb00282685216271b274394c02a8083f980b62e6640"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Check if all votes cast - not yet",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "allVotesCast",
+        "arguments": [],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [
+          "false"
+        ],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 2 votes for position 1, commitment = hash(1 + 46974a32ce6a8c3b960cb9be55ad484abcecbeffe39cbce8f970c18ffe38ce7d)",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "commit",
+        "arguments": [
+          "0x627c7f5612e4d05a4fcd487da5c8efbce205d819e3fc13770217828bd88bafd5"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Check if all votes cast - yes",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "allVotesCast",
+        "arguments": [],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [
+          "true"
+        ],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 2 tried to vote again - not possible coz all votes are now cast.",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "commit",
+        "arguments": [
+          "0x627c7f5612e4d05a4fcd487da5c8efbce205d819e3fc13770217828bd88bafd5"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "4",
+        "message": "voting over",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    }
+  ]
+}

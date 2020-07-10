@@ -41,7 +41,7 @@ pub trait Vote {
     // vote commitments
     #[private]
     #[storage_set("voteCommitment")]
-    fn _setVoteCommitment(&self, voter: &Address, value: H256);
+    fn _setVoteCommitment(&self, voter: &Address, value: &H256);
 
     #[storage_get("voteCommitment")]
     fn getVoteCommitment(&self, voter: &Address) -> H256;
@@ -72,22 +72,29 @@ pub trait Vote {
     }
 
     // commit vote
-    fn commit(&self, value: H256) -> Result<(), &str> {
+    fn commit(&self, value: &H256) -> Result<(), &str> {
         // check that a vote can still be cast
         let allVotesCast = self.allVotesCast();
         if allVotesCast {
-            return Err("no more votes available");
+            return Err("voting over");
+        }
+
+        let voter = self.get_caller();
+
+        // inc. count
+        let existing = self.getVoteCommitment(&voter);
+        if &existing == &H256::zero() {
+            self._setVoteCount(self.getVoteCount() + 1);
         }
 
         // save vote
-        self._setVoteCommitment(&self.get_caller(), value);
-        self._setVoteCount(self.getVoteCount() + 1);
+        self._setVoteCommitment(&voter, &value);
 
         Ok(())
     }
 
     // reveal vote
-    fn reveal(&self, vote: u8, salt: H256) -> Result<(), &str> {
+    fn reveal(&self, vote: u8, salt: &H256) -> Result<(), &str> {
         // check that all votes have been cast
         let allVotesCast = self.allVotesCast();
         if !allVotesCast {
@@ -98,7 +105,7 @@ pub trait Vote {
 
         // check that caller has previously voted a commitment
         let voteCommitment = self.getVoteCommitment(&voter);
-        if voteCommitment == H256::zero()  {
+        if &voteCommitment == &H256::zero()  {
             return Err("not a voter");
         }
 
@@ -116,7 +123,7 @@ pub trait Vote {
         let expectedCommitment = H256::from_slice(&key);
 
         // check that it matches the stored commitment
-        if expectedCommitment != voteCommitment {
+        if &expectedCommitment != &voteCommitment {
             return Err("vote mismatch");
         }
 
