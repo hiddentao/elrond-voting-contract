@@ -1,0 +1,17 @@
+[[bin]]
+name = "vote"
+path = "src/lib.rs"
+
+[package]
+name = "vote"
+version = "0.0.1"
+authors = [ "hiddentao",]
+edition = "2018"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+elrond-wasm = "0.4.5"
+elrond-wasm-node = "0.4.5"
+elrond-wasm-derive = "0.4.5"
