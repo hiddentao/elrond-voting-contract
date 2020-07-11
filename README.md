@@ -7,15 +7,15 @@ It lets callers choose between 2 options and uses uses a [commit-reveal](https:/
 The flow:
 
 1. Contract is deployed with with the maximum no. of users who can vote set.
-1. Users start voting by calling `commit()` with a hashed version of their vote, specifically `keccak256(<vote>|<salt>)` - `<vote>`:
+2. Users start voting by calling `commit()` with a hashed version of their vote, specifically `keccak256(<vote>|<salt>)`, where:
   * `<vote>` is either `0` or `1`
   * `<salt>` is a random keccak256 hash
-1. Until the max. no. of users have voted, each user is allowed to overwrite their previous vote commitment with a new one.
-1. Once the max no. of users have cast votes, the _reveal_ phase beings.
-1. Users now reveal their votes by calling `reveal()`, passing in their `<vote>` and `<salt>`.
-1. The contract will hash these parameters and compare the result to the stored commitment hash from earlier. If they match then the user's vote counts towards the final vote tallies. If they mismatch the contract will throw an error.
+3. Until the max. no. of users have voted, each user is allowed to overwrite their previous vote commitment with a new one.
+4. Once the max no. of users have cast votes, the _reveal_ phase beings.
+5. Users now reveal their votes by calling `reveal()`, passing in their `<vote>` and `<salt>`.
+6. The contract will hash these parameters and compare the result to the stored commitment hash from earlier. If they match then the user's vote counts towards the final vote tallies. If they mismatch the contract will throw an error.
   * _Note: a user can only successfully call `reveal()` once_
-1. The final vote tallies can be obtained by calling `getVote1Tally()` and `getVote2Tally()`.
+7. The final vote tallies can be obtained by calling `getVote1Tally()` and `getVote2Tally()`.
 
 ## Dev guide
 
