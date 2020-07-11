@@ -1,5 +1,5 @@
 {
-  "name": "commit tests",
+  "name": "reveal tests",
   "steps": [
     {
       "step": "setState",
@@ -11,6 +11,12 @@
           "code": ""
         },
         "0xacc1000000000000000000000000000000000000000000000000000000000002": {
+          "nonce": "1",
+          "balance": "0x500000",
+          "storage": {},
+          "code": ""
+        },
+        "0xacc1000000000000000000000000000000000000000000000000000000000003": {
           "nonce": "1",
           "balance": "0x500000",
           "storage": {},
@@ -47,29 +53,7 @@
     },
     {
       "step": "scCall",
-      "comment": "Person 1 votes for position 0, vote commitment = hash(0 + 9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658)",
-      "tx": {
-        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
-        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-        "value": "0",
-        "function": "commit",
-        "arguments": [
-          "0xb66a74d22acccadf162fcd538b2486e5eb19a2aab8e154ba34c483d02dd2340d"
-        ],
-        "gasLimit": "0x100000",
-        "gasPrice": "0x01"
-      },
-      "expect": {
-        "out": [],
-        "status": "",
-        "logs": [],
-        "gas": "*",
-        "refund": "*"
-      }
-    },
-    {
-      "step": "scCall",
-      "comment": "Person 1 changes vote to position 1, vote commitment = hash(1 + 9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658)",
+      "comment": "Person 1 votes for position 1, vote commitment = hash(1 + 9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658)",
       "tx": {
         "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
         "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
@@ -91,21 +75,23 @@
     },
     {
       "step": "scCall",
-      "comment": "Check if all votes cast - not yet",
+      "comment": "Person 1 tries to reveal - will fail",
       "tx": {
-        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
         "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
         "value": "0",
-        "function": "allVotesCast",
-        "arguments": [],
+        "function": "reveal",
+        "arguments": [
+          "1",
+          "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
+        ],
         "gasLimit": "0x100000",
         "gasPrice": "0x01"
       },
       "expect": {
-        "out": [
-          "false"
-        ],
-        "status": "",
+        "out": [],
+        "status": "4",
+        "message": "voting not over",
         "logs": [],
         "gas": "*",
         "refund": "*"
@@ -135,36 +121,15 @@
     },
     {
       "step": "scCall",
-      "comment": "Check if all votes cast - yes",
+      "comment": "Person 3 tries to reveal - will fail",
       "tx": {
-        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000003",
         "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
         "value": "0",
-        "function": "allVotesCast",
-        "arguments": [],
-        "gasLimit": "0x100000",
-        "gasPrice": "0x01"
-      },
-      "expect": {
-        "out": [
-          "true"
-        ],
-        "status": "",
-        "logs": [],
-        "gas": "*",
-        "refund": "*"
-      }
-    },
-    {
-      "step": "scCall",
-      "comment": "Person 2 tried to vote again - not possible coz all votes are now cast.",
-      "tx": {
-        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
-        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-        "value": "0",
-        "function": "commit",
+        "function": "reveal",
         "arguments": [
-          "0x627c7f5612e4d05a4fcd487da5c8efbce205d819e3fc13770217828bd88bafd5"
+          "1",
+          "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
         ],
         "gasLimit": "0x100000",
         "gasPrice": "0x01"
@@ -172,7 +137,55 @@
       "expect": {
         "out": [],
         "status": "4",
-        "message": "voting over",
+        "message": "not a voter",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 1 tries to reveal with bad data - will fail",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "reveal",
+        "arguments": [
+          "0",
+          "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "4",
+        "message": "vote mismatch",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 1 reveals with correct data - will pass",
+      "txId": "1-reveal-pass",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "reveal",
+        "arguments": [
+          "1",
+          "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
         "logs": [],
         "gas": "*",
         "refund": "*"

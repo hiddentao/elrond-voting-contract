@@ -98,7 +98,7 @@ pub trait Vote {
         // check that all votes have been cast
         let allVotesCast = self.allVotesCast();
         if !allVotesCast {
-            return Err("not all votes have been cast yet")
+            return Err("voting not over")
         }
 
         let voter = self.get_caller();
@@ -112,13 +112,13 @@ pub trait Vote {
         // check that caller has not already revealed their vote
         let voteReveal = self.getVoteReveal(&voter);
         if 0 < voteReveal {
-            return Err("already revealed vote");
+            return Err("already revealed");
         }
 
         // calculate expected commitment
         let mut raw_key: Vec<u8> = Vec::with_capacity(33);
         raw_key.push(vote);
-        raw_key.extend_from_slice(salt.as_bytes());
+        raw_key.extend_from_slice(salt.as_fixed_bytes());
         let key = self.keccak256(&raw_key);
         let expectedCommitment = H256::from_slice(&key);
 
