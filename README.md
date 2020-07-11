@@ -17,9 +17,7 @@ The flow:
   * _Note: a user can only successfully call `reveal()` once_
 7. The final vote tallies can be obtained by calling `getVote1Tally()` and `getVote2Tally()`.
 
-.
-
-## Dev guide
+## Dev guide
 
 Pre-requisites:
 
@@ -43,9 +41,7 @@ To run an individual test (e.g. `basic.scen.json`):
 mandos-test "./test/basic.scen.json"
 ```
 
-.
-
-## License
+## License
 
 Copyright 2020 Ramesh Nair
 
