@@ -32,11 +32,11 @@ pub trait Vote {
     fn getVote1Tally(&self) -> u16;
 
     #[private]
-    #[storage_set("vote2Tally")]
-    fn _setVote2Tally(&self, count: u16);
+    #[storage_set("vote0Tally")]
+    fn _setVote0Tally(&self, count: u16);
 
-    #[storage_get("vote2Tally")]
-    fn getVote2Tally(&self) -> u16;
+    #[storage_get("vote0Tally")]
+    fn getVote0Tally(&self) -> u16;
 
     // vote commitments
     #[private]
@@ -66,7 +66,7 @@ pub trait Vote {
     }
 
     fn allVotesRevealed(&self) -> bool {
-        let voteRevealCount = self.getVote1Tally() + self.getVote2Tally();
+        let voteRevealCount = self.getVote1Tally() + self.getVote0Tally();
         let maxVotes = self.getMaxVotes();
         voteRevealCount == maxVotes
     }
@@ -134,7 +134,7 @@ pub trait Vote {
         if vote == 1 {
             self._setVote1Tally(self.getVote1Tally() + 1)
         } else {
-            self._setVote2Tally(self.getVote2Tally() + 1)
+            self._setVote0Tally(self.getVote0Tally() + 1)
         }
 
         Ok(())

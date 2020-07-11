@@ -119,7 +119,7 @@
         "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
         "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
         "value": "0",
-        "function": "getVote2Tally",
+        "function": "getVote0Tally",
         "arguments": [],
         "gasLimit": "0x100000",
         "gasPrice": "0x01"
