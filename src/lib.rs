@@ -72,11 +72,11 @@ pub trait Vote {
     }
 
     // commit vote
-    fn commit(&self, value: &H256) -> Result<(), &str> {
+    fn commit(&self, value: &H256) -> Result<(), SCError> {
         // check that a vote can still be cast
         let allVotesCast = self.allVotesCast();
         if allVotesCast {
-            return Err("voting over");
+            return sc_error!("voting over");
         }
 
         let voter = self.get_caller();
@@ -94,11 +94,11 @@ pub trait Vote {
     }
 
     // reveal vote
-    fn reveal(&self, vote: u8, salt: &H256) -> Result<(), &str> {
+    fn reveal(&self, vote: u8, salt: &H256) -> Result<(), SCError> {
         // check that all votes have been cast
         let allVotesCast = self.allVotesCast();
         if !allVotesCast {
-            return Err("voting not over")
+            return sc_error!("voting not over")
         }
 
         let voter = self.get_caller();
@@ -106,13 +106,13 @@ pub trait Vote {
         // check that caller has previously voted a commitment
         let voteCommitment = self.getVoteCommitment(&voter);
         if &voteCommitment == &H256::zero()  {
-            return Err("not a voter");
+            return sc_error!("not a voter");
         }
 
         // check that caller has not already revealed their vote
         let voteReveal = self.getVoteReveal(&voter);
         if 0 < voteReveal {
-            return Err("already revealed");
+            return sc_error!("already revealed");
         }
 
         // calculate expected commitment
@@ -124,7 +124,7 @@ pub trait Vote {
 
         // check that it matches the stored commitment
         if &expectedCommitment != &voteCommitment {
-            return Err("vote mismatch");
+            return sc_error!("vote mismatch");
         }
 
         // save the revealed vote

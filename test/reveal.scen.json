@@ -6,19 +6,19 @@
       "accounts": {
         "0xacc1000000000000000000000000000000000000000000000000000000000001": {
           "nonce": "1",
-          "balance": "0x500000",
+          "balance": "0x5000000",
           "storage": {},
           "code": ""
         },
         "0xacc1000000000000000000000000000000000000000000000000000000000002": {
           "nonce": "1",
-          "balance": "0x500000",
+          "balance": "0x5000000",
           "storage": {},
           "code": ""
         },
         "0xacc1000000000000000000000000000000000000000000000000000000000003": {
           "nonce": "1",
-          "balance": "0x500000",
+          "balance": "0x5000000",
           "storage": {},
           "code": ""
         }
@@ -53,14 +53,14 @@
     },
     {
       "step": "scCall",
-      "comment": "Person 1 votes for position 1, vote commitment = hash(1 + 9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658)",
+      "comment": "Person 1 votes for position 1",
       "tx": {
         "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
         "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
         "value": "0",
         "function": "commit",
         "arguments": [
-          "0x60abe32f20ba0e8c090c9bb00282685216271b274394c02a8083f980b62e6640"
+          "keccak256:1|0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
         ],
         "gasLimit": "0x100000",
         "gasPrice": "0x01"
@@ -99,14 +99,14 @@
     },
     {
       "step": "scCall",
-      "comment": "Person 2 votes for position 1, commitment = hash(1 + 46974a32ce6a8c3b960cb9be55ad484abcecbeffe39cbce8f970c18ffe38ce7d)",
+      "comment": "Person 2 votes for position 1",
       "tx": {
         "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
         "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
         "value": "0",
         "function": "commit",
         "arguments": [
-          "0x627c7f5612e4d05a4fcd487da5c8efbce205d819e3fc13770217828bd88bafd5"
+          "keccak256:1|0x46974a32ce6a8c3b960cb9be55ad484abcecbeffe39cbce8f970c18ffe38ce7d"
         ],
         "gasLimit": "0x100000",
         "gasPrice": "0x01"
@@ -185,6 +185,139 @@
       },
       "expect": {
         "out": [],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 1 tries to reveal again - will fail",
+      "txId": "1-reveal-again",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "reveal",
+        "arguments": [
+          "1",
+          "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "4",
+        "message": "already revealed",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "All votes revealed? not yet",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "allVotesRevealed",
+        "arguments": [],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [ "false" ],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Person 2 reveals with correct data - will pass",
+      "txId": "2-reveal-pass",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000002",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "reveal",
+        "arguments": [
+          "1",
+          "0x46974a32ce6a8c3b960cb9be55ad484abcecbeffe39cbce8f970c18ffe38ce7d"
+        ],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "All votes revealed? yes!",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "allVotesRevealed",
+        "arguments": [],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [ "true" ],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Tally: vote 1",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "getVote1Tally",
+        "arguments": [],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [
+          "2"
+        ],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Tally: vote 2",
+      "tx": {
+        "from": "0xacc1000000000000000000000000000000000000000000000000000000000001",
+        "to": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "value": "0",
+        "function": "getVote2Tally",
+        "arguments": [],
+        "gasLimit": "0x100000",
+        "gasPrice": "0x01"
+      },
+      "expect": {
+        "out": [
+          "0"
+        ],
         "status": "",
         "logs": [],
         "gas": "*",
